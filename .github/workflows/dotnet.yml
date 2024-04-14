@@ -36,9 +36,10 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: Vasters.ForzaBridge
+          path: build
 
       - name: Zip build output
-        run: Compress-Archive -Path Vasters.ForzaBridge -DestinationPath Vasters.ForzaBridge.zip
+        run: Compress-Archive -Path build -DestinationPath Vasters.ForzaBridge.zip
 
       - name: Create Release
         id: create_release
