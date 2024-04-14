@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vasters.ForzaBridge", "Vasters.ForzaBridge\Vasters.ForzaBridge.csproj", "{C31ADFBC-1B0F-4E96-8E19-08AB9CD46258}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vasters.ForzaBridge.Producer", "vasters.forzabridge.producer\Vasters.ForzaBridge.Producer.csproj", "{349705F5-D9FE-4316-99EE-71EFCF6A8133}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C31ADFBC-1B0F-4E96-8E19-08AB9CD46258}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C31ADFBC-1B0F-4E96-8E19-08AB9CD46258}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C31ADFBC-1B0F-4E96-8E19-08AB9CD46258}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C31ADFBC-1B0F-4E96-8E19-08AB9CD46258}.Release|Any CPU.Build.0 = Release|Any CPU
+		{349705F5-D9FE-4316-99EE-71EFCF6A8133}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{349705F5-D9FE-4316-99EE-71EFCF6A8133}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{349705F5-D9FE-4316-99EE-71EFCF6A8133}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{349705F5-D9FE-4316-99EE-71EFCF6A8133}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BE2C4CCD-3C57-436D-ACBC-C2FAFA661733}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,33 @@
+﻿
+
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ProjectName>Vasters.ForzaBridge</ProjectName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <OutputType>Exe</OutputType>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Title>Forza Bridge</Title>
+    <Description>Bridge connecting Forza Motorsports 'Data Out' UDP to Microsoft Azure Event Hubs or Fabric Event Streams</Description>    
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.11.0" />
+    <PackageReference Include="CloudNative.CloudEvents" Version="2.7.1" />
+    <PackageReference Include="CloudNative.CloudEvents.SystemTextJson" Version="2.7.1" />
+    <PackageReference Include="CloudNative.CloudEvents.Avro" Version="2.7.1" />
+    <PackageReference Include="CloudNative.CloudEvents.Protobuf" Version="2.7.1" />
+    <PackageReference Include="Azure.Messaging.EventHubs" Version="5.11.2" />
+    <PackageReference Include="System.Memory.Data" Version="8.0.0"></PackageReference>
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.1.1" />
+    <PackageReference Include="Apache.Avro" Version="1.11.3" />
+  </ItemGroup>
+  <!--<Target Name="XRegistryGenerate" BeforeTargets="BeforeBuild">
+    <Message Text="Generating XRegistry code" Importance="high" />
+    <Exec Command="xregistry generate &#45;&#45;style ehproducer &#45;&#45;language cs &#45;&#45;definitions $(ProjectDir)/../xregistry/forza-telemetry.xreg.json &#45;&#45;projectname $(ProjectName).Producer &#45;&#45;output $(ProjectDir)/../$(ProjectName).Producer" />
+  </Target>-->
+  <ItemGroup>
+    <ProjectReference Include="$(ProjectDir)/../$(ProjectName).Producer/$(ProjectName).Producer.csproj" />
+  </ItemGroup>
+</Project>
