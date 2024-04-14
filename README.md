@@ -21,6 +21,7 @@ cloud event streams.
 To install ForzaBridge, ensure you have .NET 8.0 or higher installed on your
 system. You can clone this repository to build the application yourself.
 
+An installable package may be available in the future.
 
 ## Configuration
 
@@ -59,11 +60,21 @@ application will use the Azure CLI settings to authenticate.
 
 ## Usage
 
-To start ForzaBridge, use the following command format from your terminal:
+To start ForzaBridge quickly, use the following command format from your terminal:
 
 ```sh
+cd Vasters.ForzaBridge
 dotnet run -- -c YourConnectionString
 ```
+
+To connect the Forza Motorsport game to ForzaBridge, configure the game to send
+telemetry data to the IP address and port where ForzaBridge is listening. This 
+is done in the "Gameplay & HUD" settings of the game under "UDP Race Telemetry".
+
+When the IP adfdress shows as '0.0.0.0' when you start the bridge, in Forza
+Motorsport (2023), you can just configure the local address '127.0.0.1', in other
+Forza games, you may need to use the local network IP address of the machine
+running ForzaBridge.
 
 ## Data Handling
 
