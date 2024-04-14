@@ -1,0 +1,66 @@
+name: Release Workflow
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Build and publish
+        run: |
+          dotnet restore
+          dotnet publish --configuration Release --output publish
+
+      - name: Archive build output
+        uses: actions/upload-artifact@v3
+        with:
+          name: Vasters.ForzaBridge
+          path: publish/
+
+  create-release:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - name: Download build output
+        uses: actions/download-artifact@v3
+        with:
+          name: Vasters.ForzaBridge
+
+      - name: Zip build output
+        run: Compress-Archive -Path Vasters.ForzaBridge -DestinationPath Vasters.ForzaBridge.zip
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+          body: 'Release of Vasters.ForzaBridge'
+          asset_path: ./Vasters.ForzaBridge.zip
+          asset_name: Vasters.ForzaBridge.zip
+          asset_content_type: application/zip
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Vasters.ForzaBridge.zip
+          asset_name: Vasters.ForzaBridge.zip
+          asset_content_type: application/zip
