@@ -38,8 +38,12 @@ jobs:
           name: Vasters.ForzaBridge
           path: build
 
-      - name: Zip build output
-        run: Compress-Archive -Path build -DestinationPath Vasters.ForzaBridge.zip
+      - name: Zip Release
+        uses: thedoctor0/zip-release@0.7.5
+        with:
+          type: 'zip'
+          filename: Vasters.ForzaBridge.zip
+          path: build
 
       - name: Create Release
         id: create_release
