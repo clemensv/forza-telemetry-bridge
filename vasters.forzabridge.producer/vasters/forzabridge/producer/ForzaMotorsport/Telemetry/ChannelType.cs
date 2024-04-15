@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Avro;
+using Avro.Specific;
 
 namespace Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry
 {
