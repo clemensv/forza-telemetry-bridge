@@ -6,12 +6,8 @@
     <ProjectName>Vasters.ForzaBridge.Producer</ProjectName>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
-  
-   <ItemGroup>
-      <AvroSchemas Include="**\*.avsc" />
-    </ItemGroup>
-  
   <ItemGroup>
     <PackageReference Include="CloudNative.CloudEvents" Version="2.5.1" />
     <PackageReference Include="CloudNative.CloudEvents.SystemTextJson" Version="2.5.1" />

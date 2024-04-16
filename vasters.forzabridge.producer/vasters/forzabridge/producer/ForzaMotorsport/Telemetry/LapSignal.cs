@@ -10,6 +10,9 @@ using Avro.Specific;
 
 namespace Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry
 {
+    /// <summary>
+    /// LapSignal
+    /// </summary>
     public partial class LapSignal : global::Avro.Specific.ISpecificRecord
     {
         /// <summary>
@@ -27,9 +30,15 @@ namespace Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry
         /// </summary>
         [JsonPropertyName("SessionId")]
         public string? SessionId { get; set; }
+        /// <summary>
+        /// Timespan
+        /// </summary>
         [JsonPropertyName("Timespan")]
         public global::Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry.LapTimespan Timespan { get; set; }
     
+        /// <summary>
+        /// Avro schema for this class
+        /// </summary>
         public static global::Avro.Schema AvroSchema = global::Avro.Schema.Parse(
         "{\"name\": \"LapSignal\", \"type\": \"record\", \"namespace\": \"ForzaMotorsport.Telemetry\""+
         ", \"fields\": [{\"name\": \"LapId\", \"doc\": \"The unique identifier of the lap\", \"type\""+
@@ -65,7 +74,11 @@ namespace Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry
             }
         }
     
-    
+        /// <summary>
+        /// Converts the object to a byte array
+        /// </summary>
+        /// <param name="contentTypeString">The content type string of the desired encoding</param>
+        /// <returns>The encoded data</returns>
         public byte[] ToByteArray(string contentTypeString)
         {
             var contentType = new System.Net.Mime.ContentType(contentTypeString);
@@ -102,6 +115,12 @@ namespace Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry
             
         }
     
+        /// <summary>
+        /// Creates an object from the data
+        /// </summary>
+        /// <param name="data">The input data to convert</param>
+        /// <param name="contentTypeString">The content type string of the derired encoding</param>
+        /// <returns>The converted object</returns>
         public static LapSignal FromData(object data, string contentTypeString)
         {
             if ( data is LapSignal) return (LapSignal)data;
@@ -157,6 +176,10 @@ namespace Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry
             
         }
     
+        /// <summary>
+        /// Checks if the JSON element matches the schema
+        /// </summary>
+        /// <param name="element">The JSON element to check</param>
         public static bool IsJsonMatch(System.Text.Json.JsonElement element)
         {
             return (element.TryGetProperty("LapId", out System.Text.Json.JsonElement LapId) && (LapId.ValueKind == System.Text.Json.JsonValueKind.String)) && 

@@ -10,6 +10,11 @@ using Avro.Specific;
 
 namespace Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry
 {
+    #pragma warning disable 1591
+    
+    /// <summary>
+    /// ChannelType
+    /// </summary>
     public enum ChannelType
     {
         EngineMaxRpm,

@@ -1,1 +1,1 @@
-xregistry generate --style ehproducer --language cs --definitions xregistry/forza-telemetry.xreg.json --projectname Vasters.ForzaBridge.Producer --output .\Vasters.ForzaBridge.Producer
+xregistry generate --style ehproducer --language cs --definitions xregistry/forza-telemetry.xreg.json --projectname Vasters.ForzaBridge.Producer --output .\Vasters.ForzaBridge.Producer --template-args  avro-encoding=true

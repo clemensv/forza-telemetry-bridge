@@ -10,13 +10,25 @@ using Avro.Specific;
 
 namespace Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry
 {
+    /// <summary>
+    /// BatchTimespan
+    /// </summary>
     public partial class BatchTimespan : global::Avro.Specific.ISpecificRecord
     {
+        /// <summary>
+        /// StartTS
+        /// </summary>
         [JsonPropertyName("StartTS")]
         public long StartTS { get; set; }
+        /// <summary>
+        /// EndTS
+        /// </summary>
         [JsonPropertyName("EndTS")]
         public long EndTS { get; set; }
     
+        /// <summary>
+        /// Avro schema for this class
+        /// </summary>
         public static global::Avro.Schema AvroSchema = global::Avro.Schema.Parse(
         "{\"name\": \"BatchTimespan\", \"type\": \"record\", \"fields\": [{\"name\": \"StartTS\", \"type"+
         "\": \"long\", \"logicalType\": \"timestamp-millis\"}, {\"name\": \"EndTS\", \"type\": \"long\","+
@@ -43,7 +55,11 @@ namespace Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry
             }
         }
     
-    
+        /// <summary>
+        /// Converts the object to a byte array
+        /// </summary>
+        /// <param name="contentTypeString">The content type string of the desired encoding</param>
+        /// <returns>The encoded data</returns>
         public byte[] ToByteArray(string contentTypeString)
         {
             var contentType = new System.Net.Mime.ContentType(contentTypeString);
@@ -80,6 +96,12 @@ namespace Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry
             
         }
     
+        /// <summary>
+        /// Creates an object from the data
+        /// </summary>
+        /// <param name="data">The input data to convert</param>
+        /// <param name="contentTypeString">The content type string of the derired encoding</param>
+        /// <returns>The converted object</returns>
         public static BatchTimespan FromData(object data, string contentTypeString)
         {
             if ( data is BatchTimespan) return (BatchTimespan)data;
@@ -135,6 +157,10 @@ namespace Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry
             
         }
     
+        /// <summary>
+        /// Checks if the JSON element matches the schema
+        /// </summary>
+        /// <param name="element">The JSON element to check</param>
         public static bool IsJsonMatch(System.Text.Json.JsonElement element)
         {
             return (element.TryGetProperty("StartTS", out System.Text.Json.JsonElement StartTS) && (StartTS.ValueKind == System.Text.Json.JsonValueKind.Number)) && 
