@@ -17,6 +17,14 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: Install Python 3.12
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.12'
+
+      - name: Install xregistry CLI
+        run: pip install git+https://github.com/clemensv/xregistry-cli.git
+
       - name: Build and publish
         run: |
           dotnet restore

@@ -23,10 +23,10 @@
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.1.1" />
     <PackageReference Include="Apache.Avro" Version="1.11.3" />
   </ItemGroup>
-  <!-- <Target Name="XRegistryGenerate" BeforeTargets="BeforeBuild">
+  <Target Name="XRegistryGenerate" BeforeTargets="BeforeBuild">
     <Message Text="Generating XRegistry code" Importance="high" />
     <Exec Command="xregistry generate &#45;&#45;style ehproducer &#45;&#45;language cs &#45;&#45;definitions $(ProjectDir)/../xregistry/forza-telemetry.xreg.json &#45;&#45;projectname $(ProjectName).Producer &#45;&#45;output $(ProjectDir)/../$(ProjectName).Producer &#45;&#45;template-args avro-encoding=true"/>
-  </Target> -->
+  </Target>
   <ItemGroup>
     <ProjectReference Include="$(ProjectDir)/../$(ProjectName).Producer/$(ProjectName).Producer.csproj" />
   </ItemGroup>
