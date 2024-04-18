@@ -1,7 +1,6 @@
 # "Forza Bridge" for Azure Event Hubs and Microsoft Fabric Event Streams
 
 [![Release Workflow](https://github.com/clemensv/forza-telemetry-bridge/actions/workflows/dotnet.yml/badge.svg)](https://github.com/clemensv/forza-telemetry-bridge/actions/workflows/dotnet.yml)
-[![Release Workflow](https://github.com/clemensv/forza-telemetry-bridge/actions/workflows/dotnet.yml/badge.svg)](https://github.com/clemensv/forza-telemetry-bridge/actions/workflows/dotnet.yml)
 
 ## Overview
 
