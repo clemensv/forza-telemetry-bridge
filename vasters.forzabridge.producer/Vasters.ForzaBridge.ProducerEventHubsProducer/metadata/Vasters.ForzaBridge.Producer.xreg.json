@@ -1,0 +1,292 @@
+{
+    "$schema": "https://cloudevents.io/schemas/registry",
+    "messagegroups": {
+        "ForzaMotorsport.Telemetry": {
+            "format": "CloudEvents/1.0",
+            "id": "ForzaMotorsport.Telemetry",
+            "messages": {
+                "ForzaMotorsport.Telemetry.Channel": {
+                    "description": "Channel Timeseries Event",
+                    "format": "CloudEvents/1.0",
+                    "id": "ForzaMotorsport.Telemetry.Channel",
+                    "metadata": {
+                        "datacontenttype": {
+                            "value": "application/json+gzip"
+                        },
+                        "source": {
+                            "type": "uritemplate",
+                            "value": "fza://{tenantid}/{carId}"
+                        },
+                        "subject": {
+                            "type": "uritemplate",
+                            "value": "{channelId}"
+                        },
+                        "time": {
+                            "required": true
+                        },
+                        "type": {
+                            "value": "ForzaMotorsport.Telemetry.Channel"
+                        }
+                    },
+                    "schemaformat": "AVRO/1.11.1",
+                    "schemaurl": "#/schemagroups/ForzaMotorsport.Telemetry/schemas/ForzaMotorsport.Telemetry.Channel"
+                },
+                "ForzaMotorsport.Telemetry.LapSignal": {
+                    "description": "LapSignal Event",
+                    "format": "CloudEvents/1.0",
+                    "id": "ForzaMotorsport.Telemetry.LapSignal",
+                    "metadata": {
+                        "datacontenttype": {
+                            "value": "application/json+gzip"
+                        },
+                        "source": {
+                            "type": "uritemplate",
+                            "value": "fza://{tenantid}/{carId}"
+                        },
+                        "subject": {
+                            "type": "uritemplate",
+                            "value": "{sessionId}"
+                        },
+                        "time": {
+                            "required": true
+                        },
+                        "type": {
+                            "value": "ForzaMotorsport.Telemetry.LapSignal"
+                        }
+                    },
+                    "schemaformat": "AVRO/1.11.1",
+                    "schemaurl": "#/schemagroups/ForzaMotorsport.Telemetry/schemas/ForzaMotorsport.Telemetry.LapSignal"
+                }
+            }
+        }
+    },
+    "schemagroups": {
+        "ForzaMotorsport.Telemetry": {
+            "id": "ForzaMotorsport.Telemetry",
+            "schemas": {
+                "ForzaMotorsport.Telemetry.Channel": {
+                    "description": "Channel Timeseries Event Data",
+                    "id": "ForzaMotorsport.Telemetry.Channel",
+                    "latestversionid": "1",
+                    "versions": {
+                        "1": {
+                            "format": "AVRO/1.11.1",
+                            "id": "1",
+                            "schema": {
+                                "fields": [
+                                    {
+                                        "doc": "The unique identifier of the channel",
+                                        "name": "ChannelId",
+                                        "type": {
+                                            "name": "ChannelType",
+                                            "symbols": [
+                                                "EngineMaxRpm",
+                                                "EngineIdleRpm",
+                                                "CurrentEngineRpm",
+                                                "AccelerationX",
+                                                "AccelerationY",
+                                                "AccelerationZ",
+                                                "VelocityX",
+                                                "VelocityY",
+                                                "VelocityZ",
+                                                "AngularVelocityX",
+                                                "AngularVelocityY",
+                                                "AngularVelocityZ",
+                                                "Yaw",
+                                                "Pitch",
+                                                "Roll",
+                                                "NormalizedSuspensionTravelFrontLeft",
+                                                "NormalizedSuspensionTravelFrontRight",
+                                                "NormalizedSuspensionTravelRearLeft",
+                                                "NormalizedSuspensionTravelRearRight",
+                                                "TireSlipRatioFrontLeft",
+                                                "TireSlipRatioFrontRight",
+                                                "TireSlipRatioRearLeft",
+                                                "TireSlipRatioRearRight",
+                                                "WheelRotationSpeedFrontLeft",
+                                                "WheelRotationSpeedFrontRight",
+                                                "WheelRotationSpeedRearLeft",
+                                                "WheelRotationSpeedRearRight",
+                                                "WheelOnRumbleStripFrontLeft",
+                                                "WheelOnRumbleStripFrontRight",
+                                                "WheelOnRumbleStripRearLeft",
+                                                "WheelOnRumbleStripRearRight",
+                                                "WheelInPuddleDepthFrontLeft",
+                                                "WheelInPuddleDepthFrontRight",
+                                                "WheelInPuddleDepthRearLeft",
+                                                "WheelInPuddleDepthRearRight",
+                                                "SurfaceRumbleFrontLeft",
+                                                "SurfaceRumbleFrontRight",
+                                                "SurfaceRumbleRearLeft",
+                                                "SurfaceRumbleRearRight",
+                                                "TireSlipAngleFrontLeft",
+                                                "TireSlipAngleFrontRight",
+                                                "TireSlipAngleRearLeft",
+                                                "TireSlipAngleRearRight",
+                                                "TireCombinedSlipFrontLeft",
+                                                "TireCombinedSlipFrontRight",
+                                                "TireCombinedSlipRearLeft",
+                                                "TireCombinedSlipRearRight",
+                                                "SuspensionTravelMetersFrontLeft",
+                                                "SuspensionTravelMetersFrontRight",
+                                                "SuspensionTravelMetersRearLeft",
+                                                "SuspensionTravelMetersRearRight",
+                                                "PositionX",
+                                                "PositionY",
+                                                "PositionZ",
+                                                "Speed",
+                                                "Power",
+                                                "Torque",
+                                                "TireTempFrontLeft",
+                                                "TireTempFrontRight",
+                                                "TireTempRearLeft",
+                                                "TireTempRearRight",
+                                                "Boost",
+                                                "Fuel",
+                                                "DistanceTraveled",
+                                                "RacePosition",
+                                                "Accel",
+                                                "Brake",
+                                                "Clutch",
+                                                "HandBrake",
+                                                "Gear",
+                                                "Steer",
+                                                "NormalizedDrivingLine",
+                                                "NormalizedAIBrakeDifference",
+                                                "TireWearFrontLeft",
+                                                "TireWearFrontRight",
+                                                "TireWearRearLeft",
+                                                "TireWearRearRight"
+                                            ],
+                                            "type": "enum"
+                                        }
+                                    },
+                                    {
+                                        "doc": "The unique identifier of the car",
+                                        "name": "CarId",
+                                        "type": [
+                                            "null",
+                                            "string"
+                                        ]
+                                    },
+                                    {
+                                        "doc": "The unique identifier of the session",
+                                        "name": "SessionId",
+                                        "type": [
+                                            "null",
+                                            "string"
+                                        ]
+                                    },
+                                    {
+                                        "name": "LapId",
+                                        "type": [
+                                            "null",
+                                            "string"
+                                        ]
+                                    },
+                                    {
+                                        "doc": "The number of samples in this batch",
+                                        "name": "SampleCount",
+                                        "type": "long"
+                                    },
+                                    {
+                                        "doc": "The frequency of the channel",
+                                        "name": "Frequency",
+                                        "type": "long"
+                                    },
+                                    {
+                                        "name": "Timespan",
+                                        "type": {
+                                            "fields": [
+                                                {
+                                                    "logicalType": "timestamp-millis",
+                                                    "name": "StartTS",
+                                                    "type": "long"
+                                                },
+                                                {
+                                                    "logicalType": "timestamp-millis",
+                                                    "name": "EndTS",
+                                                    "type": "long"
+                                                }
+                                            ],
+                                            "name": "BatchTimespan",
+                                            "type": "record"
+                                        }
+                                    },
+                                    {
+                                        "name": "Data",
+                                        "type": {
+                                            "items": "double",
+                                            "type": "array"
+                                        }
+                                    }
+                                ],
+                                "name": "Channel",
+                                "namespace": "ForzaMotorsport.Telemetry",
+                                "type": "record"
+                            }
+                        }
+                    }
+                },
+                "ForzaMotorsport.Telemetry.LapSignal": {
+                    "description": "Lap Signal Event Data",
+                    "id": "ForzaMotorsport.Telemetry.LapSignal",
+                    "latestversionid": "1",
+                    "versions": {
+                        "1": {
+                            "format": "AVRO/1.11.1",
+                            "id": "1",
+                            "schema": {
+                                "fields": [
+                                    {
+                                        "doc": "The unique identifier of the lap",
+                                        "name": "LapId",
+                                        "type": "string"
+                                    },
+                                    {
+                                        "doc": "The unique identifier of the car",
+                                        "name": "CarId",
+                                        "type": [
+                                            "null",
+                                            "string"
+                                        ]
+                                    },
+                                    {
+                                        "doc": "The unique identifier of the session",
+                                        "name": "SessionId",
+                                        "type": [
+                                            "null",
+                                            "string"
+                                        ]
+                                    },
+                                    {
+                                        "name": "Timespan",
+                                        "type": {
+                                            "fields": [
+                                                {
+                                                    "logicalType": "timestamp-millis",
+                                                    "name": "StartTS",
+                                                    "type": "long"
+                                                },
+                                                {
+                                                    "logicalType": "timestamp-millis",
+                                                    "name": "EndTS",
+                                                    "type": "long"
+                                                }
+                                            ],
+                                            "name": "LapTimespan",
+                                            "type": "record"
+                                        }
+                                    }
+                                ],
+                                "name": "LapSignal",
+                                "namespace": "ForzaMotorsport.Telemetry",
+                                "type": "record"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

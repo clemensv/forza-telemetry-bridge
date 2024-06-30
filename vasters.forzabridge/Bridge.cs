@@ -9,16 +9,15 @@ using Azure.Messaging.EventHubs.Producer;
 using CloudNative.CloudEvents;
 using CloudNative.CloudEvents.SystemTextJson;
 using McMaster.Extensions.CommandLineUtils;
-using Microsoft.VisualBasic;
-using Vasters.ForzaBridge.Producer.ForzaMotorsport;
 using Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry;
+using Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry;
 using AvroEventFormatter = CloudNative.CloudEvents.Avro.AvroEventFormatter;
 
 namespace Vasters.ForzaBridge
 {
-    class Program
+    public class Bridge
     {
-        static void Main(string[] args)
+        public static int Main(string[] args)
         {
             var app = new CommandLineApplication();
             app.Name = "ForzaBridge";
@@ -104,9 +103,13 @@ namespace Vasters.ForzaBridge
                     formatter = new AvroEventFormatter();
                 }
 
-                EventHubProducerClient producerClient = (eventHubPolicyName != null && eventHubPolicyKey != null) ?
-                    new EventHubProducerClient(eventHubNamespace, eventHubName, new AzureNamedKeyCredential(eventHubPolicyName, eventHubPolicyKey)) :
-                    new EventHubProducerClient(eventHubNamespace, eventHubName, new DefaultAzureCredential());
+                EventHubProducerClient producerClient =
+                    (eventHubConnectionString != null && eventHubConnectionString.Contains("UseDevelopmentEmulator=true"))?
+                    new EventHubProducerClient(eventHubConnectionString, eventHubName) :
+                    (eventHubPolicyName != null && eventHubPolicyKey != null) ?
+                        new EventHubProducerClient(eventHubNamespace, eventHubName, new AzureNamedKeyCredential(eventHubPolicyName, eventHubPolicyKey)) :
+                        new EventHubProducerClient(eventHubNamespace, eventHubName, new DefaultAzureCredential());
+                TelemetryProducer telemetryProducer = new TelemetryProducer(producerClient);
 
                 Console.WriteLine($"Sending telemetry to Event Hub {eventHubNamespace}/{eventHubName}, event encoding {eventEncodingContentType}");
 
@@ -129,121 +132,128 @@ namespace Vasters.ForzaBridge
                 var sledDataSize = typeof(TelemetryDataSled).GetFields().Length * 4;
                 while (true)
                 {
-                    IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
-                    var receivedData = await udpClient.ReceiveAsync();
-                    var effectiveDataMode = (dataMode == DataMode.Automatic) ? 
-                        (receivedData.Buffer.Length <= sledDataSize ? DataMode.Sled : DataMode.Dash) : dataMode;
-                    TelemetryDataSled telemetryData = (effectiveDataMode == DataMode.Dash) ?
-                        ParseTelemetryData<TelemetryDataDash>(receivedData.Buffer, effectiveDataMode) :
-                        ParseTelemetryData<TelemetryDataSled>(receivedData.Buffer, effectiveDataMode);
-
-                    if (telemetryData.IsRaceOn == 0)
+                    try
                     {
-                        continue;
-                    }
-                    var timestamp = stopwatch.ElapsedMilliseconds;
-                    // Normalize the timestamp to the start time
-                    var normalizedTimestamp = startTimeEpoch + timestamp;
+                        IPEndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
+                        var receivedData = await udpClient.ReceiveAsync();
+                        var effectiveDataMode = (dataMode == DataMode.Automatic) ?
+                            (receivedData.Buffer.Length <= sledDataSize ? DataMode.Sled : DataMode.Dash) : dataMode;
+                        TelemetryDataSled telemetryData = (effectiveDataMode == DataMode.Dash) ?
+                            ParseTelemetryData<TelemetryDataDash>(receivedData.Buffer, effectiveDataMode) :
+                            ParseTelemetryData<TelemetryDataSled>(receivedData.Buffer, effectiveDataMode);
 
-                    channelData[ChannelType.AccelerationX].Add(telemetryData.AccelerationX);
-                    channelData[ChannelType.AccelerationY].Add(telemetryData.AccelerationY);
-                    channelData[ChannelType.AccelerationZ].Add(telemetryData.AccelerationZ);
-                    channelData[ChannelType.VelocityX].Add(telemetryData.VelocityX);
-                    channelData[ChannelType.VelocityY].Add(telemetryData.VelocityY);
-                    channelData[ChannelType.VelocityZ].Add(telemetryData.VelocityZ);
-                    channelData[ChannelType.AngularVelocityX].Add(telemetryData.AngularVelocityX);
-                    channelData[ChannelType.AngularVelocityY].Add(telemetryData.AngularVelocityY);
-                    channelData[ChannelType.AngularVelocityZ].Add(telemetryData.AngularVelocityZ);
-                    channelData[ChannelType.Yaw].Add(telemetryData.Yaw);
-                    channelData[ChannelType.Pitch].Add(telemetryData.Pitch);
-                    channelData[ChannelType.Roll].Add(telemetryData.Roll);
-                    channelData[ChannelType.NormalizedSuspensionTravelFrontLeft].Add(telemetryData.NormalizedSuspensionTravelFrontLeft);
-                    channelData[ChannelType.NormalizedSuspensionTravelFrontRight].Add(telemetryData.NormalizedSuspensionTravelFrontRight);
-                    channelData[ChannelType.NormalizedSuspensionTravelRearLeft].Add(telemetryData.NormalizedSuspensionTravelRearLeft);
-                    channelData[ChannelType.NormalizedSuspensionTravelRearRight].Add(telemetryData.NormalizedSuspensionTravelRearRight);
-                    channelData[ChannelType.TireSlipRatioFrontLeft].Add(telemetryData.TireSlipRatioFrontLeft);
-                    channelData[ChannelType.TireSlipRatioFrontRight].Add(telemetryData.TireSlipRatioFrontRight);
-                    channelData[ChannelType.TireSlipRatioRearLeft].Add(telemetryData.TireSlipRatioRearLeft);
-                    channelData[ChannelType.TireSlipRatioRearRight].Add(telemetryData.TireSlipRatioRearRight);
-                    channelData[ChannelType.WheelRotationSpeedFrontLeft].Add(telemetryData.WheelRotationSpeedFrontLeft);
-                    channelData[ChannelType.WheelRotationSpeedFrontRight].Add(telemetryData.WheelRotationSpeedFrontRight);
-                    channelData[ChannelType.WheelRotationSpeedRearLeft].Add(telemetryData.WheelRotationSpeedRearLeft);
-                    channelData[ChannelType.WheelRotationSpeedRearRight].Add(telemetryData.WheelRotationSpeedRearRight);
-                    channelData[ChannelType.SurfaceRumbleFrontLeft].Add(telemetryData.SurfaceRumbleFrontLeft);
-                    channelData[ChannelType.SurfaceRumbleFrontRight].Add(telemetryData.SurfaceRumbleFrontRight);
-                    channelData[ChannelType.SurfaceRumbleRearLeft].Add(telemetryData.SurfaceRumbleRearLeft);
-                    channelData[ChannelType.SurfaceRumbleRearRight].Add(telemetryData.SurfaceRumbleRearRight);
-                    channelData[ChannelType.TireSlipAngleFrontLeft].Add(telemetryData.TireSlipAngleFrontLeft);
-                    channelData[ChannelType.TireSlipAngleFrontRight].Add(telemetryData.TireSlipAngleFrontRight);
-                    channelData[ChannelType.TireSlipAngleRearLeft].Add(telemetryData.TireSlipAngleRearLeft);
-                    channelData[ChannelType.TireSlipAngleRearRight].Add(telemetryData.TireSlipAngleRearRight);
-                    channelData[ChannelType.TireCombinedSlipFrontLeft].Add(telemetryData.TireCombinedSlipFrontLeft);
-                    channelData[ChannelType.TireCombinedSlipFrontRight].Add(telemetryData.TireCombinedSlipFrontRight);
-                    channelData[ChannelType.TireCombinedSlipRearLeft].Add(telemetryData.TireCombinedSlipRearLeft);
-                    channelData[ChannelType.TireCombinedSlipRearRight].Add(telemetryData.TireCombinedSlipRearRight);
-                    channelData[ChannelType.SuspensionTravelMetersFrontLeft].Add(telemetryData.SuspensionTravelMetersFrontLeft);
-                    channelData[ChannelType.SuspensionTravelMetersFrontRight].Add(telemetryData.SuspensionTravelMetersFrontRight);
-                    channelData[ChannelType.SuspensionTravelMetersRearLeft].Add(telemetryData.SuspensionTravelMetersRearLeft);
-                    channelData[ChannelType.SuspensionTravelMetersRearRight].Add(telemetryData.SuspensionTravelMetersRearRight);
-                    if (telemetryData is TelemetryDataDash)
-                    {
-                        var dash = (TelemetryDataDash)telemetryData;
-
-                        channelData[ChannelType.PositionX].Add(dash.PositionX);
-                        channelData[ChannelType.PositionY].Add(dash.PositionY);
-                        channelData[ChannelType.PositionZ].Add(dash.PositionZ);
-                        channelData[ChannelType.Speed].Add(dash.Speed);
-                        channelData[ChannelType.Power].Add(dash.Power);
-                        channelData[ChannelType.Torque].Add(dash.Torque);
-                        channelData[ChannelType.TireTempFrontLeft].Add(dash.TireTempFrontLeft);
-                        channelData[ChannelType.TireTempFrontRight].Add(dash.TireTempFrontRight);
-                        channelData[ChannelType.TireTempRearLeft].Add(dash.TireTempRearLeft);
-                        channelData[ChannelType.TireTempRearRight].Add(dash.TireTempRearRight);
-                        channelData[ChannelType.Boost].Add(dash.Boost);
-                        channelData[ChannelType.Fuel].Add(dash.Fuel);
-                        channelData[ChannelType.DistanceTraveled].Add(dash.DistanceTraveled);
-                        channelData[ChannelType.RacePosition].Add(dash.RacePosition);
-                        channelData[ChannelType.Accel].Add(dash.Accel);
-                        channelData[ChannelType.Brake].Add(dash.Brake);
-                        channelData[ChannelType.Clutch].Add(dash.Clutch);
-                        channelData[ChannelType.HandBrake].Add(dash.HandBrake);
-                        channelData[ChannelType.Gear].Add(dash.Gear);
-                        channelData[ChannelType.Steer].Add(dash.Steer);
-                        channelData[ChannelType.NormalizedDrivingLine].Add(dash.NormalizedDrivingLine);
-                        channelData[ChannelType.NormalizedAIBrakeDifference].Add(dash.NormalizedAIBrakeDifference);
-                        channelData[ChannelType.TireWearFrontLeft].Add(dash.TireWearFrontLeft);
-                        channelData[ChannelType.TireWearFrontRight].Add(dash.TireWearFrontRight);
-                        channelData[ChannelType.TireWearRearLeft].Add(dash.TireWearRearLeft);
-                        channelData[ChannelType.TireWearRearRight].Add(dash.TireWearRearRight);
-
-                        lapId = dash.LapNumber;
-                        if (priorLapId != lapId)
+                        if (telemetryData.IsRaceOn == 0)
                         {
-                            priorLapId = lapId;
-                            Console.WriteLine($"lap: {lapId}");
+                            continue;
+                        }
+                        var timestamp = stopwatch.ElapsedMilliseconds;
+                        // Normalize the timestamp to the start time
+                        var normalizedTimestamp = startTimeEpoch + timestamp;
+
+                        channelData[ChannelType.AccelerationX].Add(telemetryData.AccelerationX);
+                        channelData[ChannelType.AccelerationY].Add(telemetryData.AccelerationY);
+                        channelData[ChannelType.AccelerationZ].Add(telemetryData.AccelerationZ);
+                        channelData[ChannelType.VelocityX].Add(telemetryData.VelocityX);
+                        channelData[ChannelType.VelocityY].Add(telemetryData.VelocityY);
+                        channelData[ChannelType.VelocityZ].Add(telemetryData.VelocityZ);
+                        channelData[ChannelType.AngularVelocityX].Add(telemetryData.AngularVelocityX);
+                        channelData[ChannelType.AngularVelocityY].Add(telemetryData.AngularVelocityY);
+                        channelData[ChannelType.AngularVelocityZ].Add(telemetryData.AngularVelocityZ);
+                        channelData[ChannelType.Yaw].Add(telemetryData.Yaw);
+                        channelData[ChannelType.Pitch].Add(telemetryData.Pitch);
+                        channelData[ChannelType.Roll].Add(telemetryData.Roll);
+                        channelData[ChannelType.NormalizedSuspensionTravelFrontLeft].Add(telemetryData.NormalizedSuspensionTravelFrontLeft);
+                        channelData[ChannelType.NormalizedSuspensionTravelFrontRight].Add(telemetryData.NormalizedSuspensionTravelFrontRight);
+                        channelData[ChannelType.NormalizedSuspensionTravelRearLeft].Add(telemetryData.NormalizedSuspensionTravelRearLeft);
+                        channelData[ChannelType.NormalizedSuspensionTravelRearRight].Add(telemetryData.NormalizedSuspensionTravelRearRight);
+                        channelData[ChannelType.TireSlipRatioFrontLeft].Add(telemetryData.TireSlipRatioFrontLeft);
+                        channelData[ChannelType.TireSlipRatioFrontRight].Add(telemetryData.TireSlipRatioFrontRight);
+                        channelData[ChannelType.TireSlipRatioRearLeft].Add(telemetryData.TireSlipRatioRearLeft);
+                        channelData[ChannelType.TireSlipRatioRearRight].Add(telemetryData.TireSlipRatioRearRight);
+                        channelData[ChannelType.WheelRotationSpeedFrontLeft].Add(telemetryData.WheelRotationSpeedFrontLeft);
+                        channelData[ChannelType.WheelRotationSpeedFrontRight].Add(telemetryData.WheelRotationSpeedFrontRight);
+                        channelData[ChannelType.WheelRotationSpeedRearLeft].Add(telemetryData.WheelRotationSpeedRearLeft);
+                        channelData[ChannelType.WheelRotationSpeedRearRight].Add(telemetryData.WheelRotationSpeedRearRight);
+                        channelData[ChannelType.SurfaceRumbleFrontLeft].Add(telemetryData.SurfaceRumbleFrontLeft);
+                        channelData[ChannelType.SurfaceRumbleFrontRight].Add(telemetryData.SurfaceRumbleFrontRight);
+                        channelData[ChannelType.SurfaceRumbleRearLeft].Add(telemetryData.SurfaceRumbleRearLeft);
+                        channelData[ChannelType.SurfaceRumbleRearRight].Add(telemetryData.SurfaceRumbleRearRight);
+                        channelData[ChannelType.TireSlipAngleFrontLeft].Add(telemetryData.TireSlipAngleFrontLeft);
+                        channelData[ChannelType.TireSlipAngleFrontRight].Add(telemetryData.TireSlipAngleFrontRight);
+                        channelData[ChannelType.TireSlipAngleRearLeft].Add(telemetryData.TireSlipAngleRearLeft);
+                        channelData[ChannelType.TireSlipAngleRearRight].Add(telemetryData.TireSlipAngleRearRight);
+                        channelData[ChannelType.TireCombinedSlipFrontLeft].Add(telemetryData.TireCombinedSlipFrontLeft);
+                        channelData[ChannelType.TireCombinedSlipFrontRight].Add(telemetryData.TireCombinedSlipFrontRight);
+                        channelData[ChannelType.TireCombinedSlipRearLeft].Add(telemetryData.TireCombinedSlipRearLeft);
+                        channelData[ChannelType.TireCombinedSlipRearRight].Add(telemetryData.TireCombinedSlipRearRight);
+                        channelData[ChannelType.SuspensionTravelMetersFrontLeft].Add(telemetryData.SuspensionTravelMetersFrontLeft);
+                        channelData[ChannelType.SuspensionTravelMetersFrontRight].Add(telemetryData.SuspensionTravelMetersFrontRight);
+                        channelData[ChannelType.SuspensionTravelMetersRearLeft].Add(telemetryData.SuspensionTravelMetersRearLeft);
+                        channelData[ChannelType.SuspensionTravelMetersRearRight].Add(telemetryData.SuspensionTravelMetersRearRight);
+                        if (telemetryData is TelemetryDataDash)
+                        {
+                            var dash = (TelemetryDataDash)telemetryData;
+
+                            channelData[ChannelType.PositionX].Add(dash.PositionX);
+                            channelData[ChannelType.PositionY].Add(dash.PositionY);
+                            channelData[ChannelType.PositionZ].Add(dash.PositionZ);
+                            channelData[ChannelType.Speed].Add(dash.Speed);
+                            channelData[ChannelType.Power].Add(dash.Power);
+                            channelData[ChannelType.Torque].Add(dash.Torque);
+                            channelData[ChannelType.TireTempFrontLeft].Add(dash.TireTempFrontLeft);
+                            channelData[ChannelType.TireTempFrontRight].Add(dash.TireTempFrontRight);
+                            channelData[ChannelType.TireTempRearLeft].Add(dash.TireTempRearLeft);
+                            channelData[ChannelType.TireTempRearRight].Add(dash.TireTempRearRight);
+                            channelData[ChannelType.Boost].Add(dash.Boost);
+                            channelData[ChannelType.Fuel].Add(dash.Fuel);
+                            channelData[ChannelType.DistanceTraveled].Add(dash.DistanceTraveled);
+                            channelData[ChannelType.RacePosition].Add(dash.RacePosition);
+                            channelData[ChannelType.Accel].Add(dash.Accel);
+                            channelData[ChannelType.Brake].Add(dash.Brake);
+                            channelData[ChannelType.Clutch].Add(dash.Clutch);
+                            channelData[ChannelType.HandBrake].Add(dash.HandBrake);
+                            channelData[ChannelType.Gear].Add(dash.Gear);
+                            channelData[ChannelType.Steer].Add(dash.Steer);
+                            channelData[ChannelType.NormalizedDrivingLine].Add(dash.NormalizedDrivingLine);
+                            channelData[ChannelType.NormalizedAIBrakeDifference].Add(dash.NormalizedAIBrakeDifference);
+                            channelData[ChannelType.TireWearFrontLeft].Add(dash.TireWearFrontLeft);
+                            channelData[ChannelType.TireWearFrontRight].Add(dash.TireWearFrontRight);
+                            channelData[ChannelType.TireWearRearLeft].Add(dash.TireWearRearLeft);
+                            channelData[ChannelType.TireWearRearRight].Add(dash.TireWearRearRight);
+
+                            lapId = dash.LapNumber;
+                            if (priorLapId != lapId)
+                            {
+                                priorLapId = lapId;
+                                Console.WriteLine($"lap: {lapId}");
+                                var startTS = lastSend + startTimeEpoch;
+                                var endTS = timestamp + startTimeEpoch;
+                                var effectiveLapId = lapId.ToString();
+                                var effectiveCarId = (carId != null) ? carId : $"{telemetryData.CarOrdinal}:{telemetryData.CarClass}:{telemetryData.CarPerformanceIndex}";
+                                await SendLapSignal(telemetryProducer, startTS, endTS, tenantId, effectiveCarId, sessionId, effectiveLapId, eventEncodingContentType, formatter);
+                            }
+                        }
+
+                        if (timestamp - lastSend >= (1000 / dataRate) - 1)
+                        {
+                            var capturedChannelData = channelData;
+                            channelData = InitializeChannelData();
+                            Console.WriteLine($"lap: {lapId}, msec: {timestamp - lastSend}, recs: {capturedChannelData[ChannelType.AccelerationX].Count}");
                             var startTS = lastSend + startTimeEpoch;
                             var endTS = timestamp + startTimeEpoch;
                             var effectiveLapId = lapId.ToString();
                             var effectiveCarId = (carId != null) ? carId : $"{telemetryData.CarOrdinal}:{telemetryData.CarClass}:{telemetryData.CarPerformanceIndex}";
-                            _ = Task.Run(() => SendLapSignal(producerClient, startTS, endTS, tenantId, effectiveCarId, sessionId, effectiveLapId, eventEncodingContentType, formatter));
+                            lastSend = timestamp;
+                            await SendChannelData(telemetryProducer, capturedChannelData, startTS, endTS, tenantId, effectiveCarId, sessionId, effectiveLapId, eventEncodingContentType, formatter);
                         }
                     }
-
-                    if (timestamp - lastSend >= (1000 / dataRate)-1)
+                    catch (Exception ex)
                     {
-                        var capturedChannelData = channelData;
-                        channelData = InitializeChannelData();
-                        Console.WriteLine($"lap: {lapId}, msec: {timestamp - lastSend}, recs: {capturedChannelData[ChannelType.AccelerationX].Count}");
-                        var startTS = lastSend + startTimeEpoch;
-                        var endTS = timestamp + startTimeEpoch;
-                        var effectiveLapId = lapId.ToString();
-                        var effectiveCarId = (carId != null) ? carId : $"{telemetryData.CarOrdinal}:{telemetryData.CarClass}:{telemetryData.CarPerformanceIndex}";
-                        lastSend = timestamp;
-                        _ = Task.Run(() => SendChannelData(producerClient, capturedChannelData, startTS, endTS, tenantId, effectiveCarId, sessionId, effectiveLapId, eventEncodingContentType, formatter));
+                        Console.WriteLine($"Error: {ex.Message}");
                     }
                 }
             });
-            app.Execute(args);
+            return app.Execute(args);
         }
 
         public enum EventDataEncoding
@@ -263,33 +273,37 @@ namespace Vasters.ForzaBridge
             AvroStructured
         }
 
-        private static async Task SendLapSignal(EventHubProducerClient producerClient, long lastSend, long timestamp, 
+        private static async Task SendLapSignal(TelemetryProducer producerClient, long lastSend, long timestamp, 
                                                 string tenantId, string carId, string sessionId, 
                                                 string lapId, string contentType, CloudEventFormatter? formatter)
         {
-            var lapSignalEvent = TelemetryEventFactory.CreateLapSignalEvent(new LapSignal
-            {
-                CarId = carId,
-                SessionId = sessionId,
-                LapId = lapId
-            }, tenantId, carId, sessionId, contentType, formatter);
-            await producerClient.SendAsync(new[] { lapSignalEvent });
+            await producerClient.SendLapSignalAsync(
+                new LapSignal {
+                    CarId = carId,
+                    SessionId = sessionId,
+                    LapId = lapId
+                }, 
+                tenantId, carId, sessionId, contentType, formatter);
             Console.WriteLine($"Sent lap signal event for car {carId}, lap {lapId}");
         }
 
-        private static async Task SendChannelData(EventHubProducerClient producerClient, Dictionary<ChannelType, List<double>> capturedChannelData, 
+        private static async Task SendChannelData(TelemetryProducer producerClient, Dictionary<ChannelType, List<double>> capturedChannelData, 
                                                   long startTS, long endTS, string tenantId, string carId, string sessionId,
                                                   string lapId, string contentType, CloudEventFormatter? formatter)
         {
             int totalEventCount = 0;
-            var batch = await producerClient.CreateBatchAsync();
+            Dictionary<ChannelType,List<Channel>> channels = new Dictionary<ChannelType, List<Channel>>();
             foreach (var channelData in capturedChannelData)
             {
                 if (channelData.Value.Count == 0)
                 {
                     continue;
                 }
-                var channelEvent = TelemetryEventFactory.CreateChannelEvent(new Channel
+                if (!channels.ContainsKey(channelData.Key))
+                {
+                    channels.Add(channelData.Key, new List<Channel>());
+                }
+                channels[channelData.Key].Add(new Channel
                 {
                     ChannelId = channelData.Key,
                     CarId = carId,
@@ -303,19 +317,11 @@ namespace Vasters.ForzaBridge
                         EndTS = endTS
                     },
                     Data = channelData.Value
-                }, tenantId, carId, channelData.Key.ToString(), contentType, formatter);
-                if ( !batch.TryAdd(channelEvent) )
-                {
-                    await producerClient.SendAsync(batch);
-                    totalEventCount += batch.Count;
-                    batch = await producerClient.CreateBatchAsync();
-                    batch.TryAdd(channelEvent);
-                }
+                });
             }
-            if (batch.Count > 0)
+            foreach (var channel in channels)
             {
-                await producerClient.SendAsync(batch);
-                totalEventCount += batch.Count;
+                await producerClient.SendChannelBatchAsync(channel.Value.ToArray(), tenantId, carId, channel.Key.ToString(), contentType, formatter);
             }
             Console.WriteLine($"Sent {totalEventCount} channel events for car {carId}");
         }
@@ -393,7 +399,7 @@ namespace Vasters.ForzaBridge
             return channelData;
         }
 
-        static T ParseTelemetryData<T>(byte[] data, DataMode dataMode) where T : TelemetryDataSled
+        public static T ParseTelemetryData<T>(byte[] data, DataMode dataMode) where T : TelemetryDataSled
         {
             // Implement the logic to parse the telemetry data from the byte array
             // and return the parsed telemetry data object. Base this on the Forza Motorsports docs:
@@ -499,111 +505,5 @@ namespace Vasters.ForzaBridge
             }
             return (T)telemetryData;
         }
-    }
-
-    public enum DataMode
-    {
-        Sled,
-        Dash,
-        Automatic
-    }
-
-
-    public class TelemetryDataSled
-    {
-        public int IsRaceOn; // S32
-        public uint TimestampMS; // U32
-        public float EngineMaxRpm; // F32
-        public float EngineIdleRpm; // F32
-        public float CurrentEngineRpm; // F32
-        public float AccelerationX; // F32
-        public float AccelerationY; // F32
-        public float AccelerationZ; // F32
-        public float VelocityX; // F32
-        public float VelocityY; // F32
-        public float VelocityZ; // F32
-        public float AngularVelocityX; // F32
-        public float AngularVelocityY; // F32
-        public float AngularVelocityZ; // F32
-        public float Yaw; // F32
-        public float Pitch; // F32
-        public float Roll; // F32
-        public float NormalizedSuspensionTravelFrontLeft; // F32
-        public float NormalizedSuspensionTravelFrontRight; // F32
-        public float NormalizedSuspensionTravelRearLeft; // F32
-        public float NormalizedSuspensionTravelRearRight; // F32
-        public float TireSlipRatioFrontLeft; // F32
-        public float TireSlipRatioFrontRight; // F32
-        public float TireSlipRatioRearLeft; // F32
-        public float TireSlipRatioRearRight; // F32
-        public float WheelRotationSpeedFrontLeft; // F32
-        public float WheelRotationSpeedFrontRight; // F32
-        public float WheelRotationSpeedRearLeft; // F32
-        public float WheelRotationSpeedRearRight; // F32
-        public int WheelOnRumbleStripFrontLeft; // S32
-        public int WheelOnRumbleStripFrontRight; // S32
-        public int WheelOnRumbleStripRearLeft; // S32
-        public int WheelOnRumbleStripRearRight; // S32
-        public float WheelInPuddleDepthFrontLeft; // F32
-        public float WheelInPuddleDepthFrontRight; // F32
-        public float WheelInPuddleDepthRearLeft; // F32
-        public float WheelInPuddleDepthRearRight; // F32
-        public float SurfaceRumbleFrontLeft; // F32
-        public float SurfaceRumbleFrontRight; // F32
-        public float SurfaceRumbleRearLeft; // F32
-        public float SurfaceRumbleRearRight; // F32
-        public float TireSlipAngleFrontLeft; // F32
-        public float TireSlipAngleFrontRight; // F32
-        public float TireSlipAngleRearLeft; // F32
-        public float TireSlipAngleRearRight; // F32
-        public float TireCombinedSlipFrontLeft; // F32
-        public float TireCombinedSlipFrontRight; // F32
-        public float TireCombinedSlipRearLeft; // F32
-        public float TireCombinedSlipRearRight; // F32
-        public float SuspensionTravelMetersFrontLeft; // F32
-        public float SuspensionTravelMetersFrontRight; // F32
-        public float SuspensionTravelMetersRearLeft; // F32
-        public float SuspensionTravelMetersRearRight; // F32
-        public int CarOrdinal; // S32
-        public int CarClass; // S32
-        public int CarPerformanceIndex; // S32
-        public int DrivetrainType; // S32
-        public int NumCylinders; // S32
-    }
-
-    public class TelemetryDataDash : TelemetryDataSled
-    {
-        public float PositionX; // F32
-        public float PositionY; // F32
-        public float PositionZ; // F32
-        public float Speed; // F32
-        public float Power; // F32
-        public float Torque; // F32
-        public float TireTempFrontLeft; // F32
-        public float TireTempFrontRight; // F32
-        public float TireTempRearLeft; // F32
-        public float TireTempRearRight; // F32
-        public float Boost; // F32
-        public float Fuel; // F32
-        public float DistanceTraveled; // F32
-        public float BestLap; // F32
-        public float LastLap; // F32
-        public float CurrentLap; // F32
-        public float CurrentRaceTime; // F32
-        public ushort LapNumber; // U16
-        public byte RacePosition; // U8
-        public byte Accel; // U8
-        public byte Brake; // U8
-        public byte Clutch; // U8
-        public byte HandBrake; // U8
-        public byte Gear; // U8
-        public sbyte Steer; // S8
-        public sbyte NormalizedDrivingLine; // S8
-        public sbyte NormalizedAIBrakeDifference; // S8
-        public float TireWearFrontLeft; // F32
-        public float TireWearFrontRight; // F32
-        public float TireWearRearLeft; // F32
-        public float TireWearRearRight; // F32
-        public int TrackOrdinal; // S32
     }
 }

@@ -3,12 +3,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Avro;
-using Avro.Specific;
 
-namespace Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry
+namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
 {
     #pragma warning disable 1591
     

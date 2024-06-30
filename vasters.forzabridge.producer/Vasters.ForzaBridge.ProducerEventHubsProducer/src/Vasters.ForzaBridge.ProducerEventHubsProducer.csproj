@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ProjectName>Vasters.ForzaBridge.Producer</ProjectName>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>  
+  <ItemGroup>
+    <ProjectReference Include="..\..\Vasters.ForzaBridge.ProducerData\src\Vasters.ForzaBridge.ProducerData.csproj" />
+  </ItemGroup>
+  <ItemGroup><PackageReference Include="CloudNative.CloudEvents" Version="2.7.1" />
+      <PackageReference Include="CloudNative.CloudEvents.SystemTextJson" Version="2.7.1" />
+      <PackageReference Include="CloudNative.CloudEvents.Avro" Version="2.7.1" />
+      <PackageReference Include="CloudNative.CloudEvents.Protobuf" Version="2.7.1" />
+      <PackageReference Include="Azure.Messaging.EventHubs" Version="5.11.3" />
+      <PackageReference Include="System.Memory.Data" Version="8.0.0" />
+          
+  </ItemGroup>  
+</Project>
