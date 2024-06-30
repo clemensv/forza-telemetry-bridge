@@ -230,7 +230,7 @@ namespace Vasters.ForzaBridge
                                 var endTS = timestamp + startTimeEpoch;
                                 var effectiveLapId = lapId.ToString();
                                 var effectiveCarId = (carId != null) ? carId : $"{telemetryData.CarOrdinal}:{telemetryData.CarClass}:{telemetryData.CarPerformanceIndex}";
-                                await SendLapSignal(telemetryProducer, startTS, endTS, tenantId, effectiveCarId, sessionId, effectiveLapId, eventEncodingContentType, formatter);
+                                _ = Task.Run(async () => await SendLapSignal(telemetryProducer, startTS, endTS, tenantId, effectiveCarId, sessionId, effectiveLapId, eventEncodingContentType, formatter));
                             }
                         }
 
@@ -244,7 +244,7 @@ namespace Vasters.ForzaBridge
                             var effectiveLapId = lapId.ToString();
                             var effectiveCarId = (carId != null) ? carId : $"{telemetryData.CarOrdinal}:{telemetryData.CarClass}:{telemetryData.CarPerformanceIndex}";
                             lastSend = timestamp;
-                            await SendChannelData(telemetryProducer, capturedChannelData, startTS, endTS, tenantId, effectiveCarId, sessionId, effectiveLapId, eventEncodingContentType, formatter);
+                            _ = Task.Run(async () => await SendChannelData(telemetryProducer, capturedChannelData, startTS, endTS, tenantId, effectiveCarId, sessionId, effectiveLapId, eventEncodingContentType, formatter));
                         }
                     }
                     catch (Exception ex)
@@ -321,7 +321,9 @@ namespace Vasters.ForzaBridge
             }
             foreach (var channel in channels)
             {
-                await producerClient.SendChannelBatchAsync(channel.Value.ToArray(), tenantId, carId, channel.Key.ToString(), contentType, formatter);
+                var values = channel.Value.ToArray();
+                totalEventCount += values.Length;
+                await producerClient.SendChannelBatchAsync(values, tenantId, carId, channel.Key.ToString(), contentType, formatter);
             }
             Console.WriteLine($"Sent {totalEventCount} channel events for car {carId}");
         }
