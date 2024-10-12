@@ -107,6 +107,7 @@ namespace Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry
             };
             CloudEvent cloudEvent = new CloudEvent()
             {
+                Id = System.Guid.NewGuid().ToString(),
                 Type = $"ForzaMotorsport.Telemetry.Channel",
                 Source = new Uri($"fza://{tenantid}/{carId}", UriKind.RelativeOrAbsolute),
                 Subject = $"{channelId}",
@@ -137,6 +138,7 @@ namespace Vasters.ForzaBridge.Producer.ForzaMotorsport.Telemetry
             };
             CloudEvent cloudEvent = new CloudEvent()
             {
+                Id = System.Guid.NewGuid().ToString(),
                 Type = $"ForzaMotorsport.Telemetry.LapSignal",
                 Source = new Uri($"fza://{tenantid}/{carId}", UriKind.RelativeOrAbsolute),
                 Subject = $"{sessionId}",
