@@ -281,7 +281,12 @@ namespace Vasters.ForzaBridge
                 new LapSignal {
                     CarId = carId,
                     SessionId = sessionId,
-                    LapId = lapId
+                    LapId = lapId,
+                    Timespan = new LapTimespan()
+                    {
+                        StartTS = lastSend,
+                        EndTS = timestamp,
+                    }
                 }, 
                 tenantId, carId, sessionId, contentType, formatter);
             Console.WriteLine($"Sent lap signal event for car {carId}, lap {lapId}");
