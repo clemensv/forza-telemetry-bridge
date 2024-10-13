@@ -120,6 +120,7 @@ namespace Vasters.ForzaBridge
                     startTime.Year, startTime.Month, startTime.Day, 
                     startTime.Hour, startTime.Minute, startTime.Second, 
                     0, startTime.Offset).ToUnixTimeMilliseconds();
+                
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
                 var lastSend = stopwatch.ElapsedMilliseconds;
@@ -130,6 +131,7 @@ namespace Vasters.ForzaBridge
 
                 Dictionary<ChannelType, List<double>> channelData = InitializeChannelData();
                 var sledDataSize = typeof(TelemetryDataSled).GetFields().Length * 4;
+                var lapEpoch = startTimeEpoch;
                 while (true)
                 {
                     try
@@ -226,11 +228,12 @@ namespace Vasters.ForzaBridge
                             {
                                 priorLapId = lapId;
                                 Console.WriteLine($"lap: {lapId}");
-                                var startTS = lastSend + startTimeEpoch;
-                                var endTS = timestamp + startTimeEpoch;
+                                var startTS = lapEpoch;
+                                var endTS = normalizedTimestamp;
                                 var effectiveLapId = lapId.ToString();
                                 var effectiveCarId = (carId != null) ? carId : $"{telemetryData.CarOrdinal}:{telemetryData.CarClass}:{telemetryData.CarPerformanceIndex}";
                                 _ = Task.Run(async () => await SendLapSignal(telemetryProducer, startTS, endTS, tenantId, effectiveCarId, sessionId, effectiveLapId, eventEncodingContentType, formatter));
+                                lapEpoch = endTS;
                             }
                         }
 
