@@ -13,15 +13,15 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <PackageReference Include="Azure.Identity" Version="1.12.0" />
-    <PackageReference Include="CloudNative.CloudEvents" Version="2.7.1" />
-    <PackageReference Include="CloudNative.CloudEvents.SystemTextJson" Version="2.7.1" />
-    <PackageReference Include="CloudNative.CloudEvents.Avro" Version="2.7.1" />
-    <PackageReference Include="CloudNative.CloudEvents.Protobuf" Version="2.7.1" />
-    <PackageReference Include="Azure.Messaging.EventHubs" Version="5.11.3" />
-    <PackageReference Include="System.Memory.Data" Version="8.0.0"></PackageReference>
+    <PackageReference Include="Azure.Identity" Version="1.13.2" />
+    <PackageReference Include="CloudNative.CloudEvents" Version="2.8.0" />
+    <PackageReference Include="CloudNative.CloudEvents.SystemTextJson" Version="2.8.0" />
+    <PackageReference Include="CloudNative.CloudEvents.Avro" Version="2.8.0" />
+    <PackageReference Include="CloudNative.CloudEvents.Protobuf" Version="2.8.0" />
+    <PackageReference Include="Azure.Messaging.EventHubs" Version="5.11.6" />
+    <PackageReference Include="System.Memory.Data" Version="9.0.2"></PackageReference>
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.1.1" />
-    <PackageReference Include="Apache.Avro" Version="1.11.3" />
+    <PackageReference Include="Apache.Avro" Version="1.12.0" />
   </ItemGroup>
   
   <ItemGroup>

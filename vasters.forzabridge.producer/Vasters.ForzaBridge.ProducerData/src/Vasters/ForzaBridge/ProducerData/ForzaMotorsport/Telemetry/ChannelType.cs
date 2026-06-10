@@ -16,6 +16,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
     /// </summary>
     public enum ChannelType
     {
+        TimestampMS,
         EngineMaxRpm,
         EngineIdleRpm,
         CurrentEngineRpm,
@@ -92,6 +93,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
         TireWearFrontLeft,
         TireWearFrontRight,
         TireWearRearLeft,
-        TireWearRearRight
+        TireWearRearRight,
+        CurrentLapTimer
     }
 }

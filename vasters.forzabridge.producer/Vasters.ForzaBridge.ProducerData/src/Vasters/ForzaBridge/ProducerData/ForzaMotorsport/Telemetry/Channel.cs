@@ -31,6 +31,21 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
         [System.Text.Json.Serialization.JsonPropertyName("SessionId")]
         public string? SessionId { get; set; }
         /// <summary>
+        /// The unique name of the session
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SessionName")]
+        public string? SessionName { get; set; }
+        /// <summary>
+        /// The unique name of the session
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Email")]
+        public string? Email { get; set; }
+        /// <summary>
+        /// The unique name of the session
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Telephone")]
+        public string? Telephone { get; set; }
+        /// <summary>
         /// LapId
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("LapId")]
