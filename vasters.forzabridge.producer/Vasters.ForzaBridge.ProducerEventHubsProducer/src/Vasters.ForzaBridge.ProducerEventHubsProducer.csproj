@@ -9,7 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Vasters.ForzaBridge.ProducerData\src\Vasters.ForzaBridge.ProducerData.csproj" />
   </ItemGroup>
-  <ItemGroup><PackageReference Include="CloudNative.CloudEvents" Version="2.7.1" />
+  <ItemGroup><PackageReference Include="CloudNative.CloudEvents" Version="2.8.0" />
       <PackageReference Include="CloudNative.CloudEvents.SystemTextJson" Version="2.7.1" />
       <PackageReference Include="CloudNative.CloudEvents.Avro" Version="2.7.1" />
       <PackageReference Include="CloudNative.CloudEvents.Protobuf" Version="2.7.1" />
