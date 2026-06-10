@@ -21,7 +21,7 @@
     <PackageReference Include="Azure.Messaging.EventHubs" Version="5.11.3" />
     <PackageReference Include="System.Memory.Data" Version="8.0.0"></PackageReference>
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="4.1.1" />
-    <PackageReference Include="Apache.Avro" Version="1.11.3" />
+    <PackageReference Include="Apache.Avro" Version="1.12.1" />
   </ItemGroup>
   
   <ItemGroup>
