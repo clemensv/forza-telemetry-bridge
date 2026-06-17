@@ -4,8 +4,8 @@
 
 ## Overview
 
-ForzaBridge is a console application designed to capture and forward Forza
-Motorsport telemetry data to Microsoft Azure Event Hubs or Microsoft Fabric
+ForzaBridge is a console application designed to capture and forward [Forza
+Motorsport telemetry data](https://support.forzamotorsport.net/hc/en-us/articles/21742934024211-Forza-Motorsport-Data-Out-Documentation) (Windows | Xbox) to Microsoft Azure Event Hubs or Microsoft Fabric
 Event Streams. It utilizes UDP to listen for telemetry data sent from Forza
 Motorsport games and forwards this data after processing and formatting into
 cloud event streams.
@@ -32,6 +32,9 @@ available options:
 
 ### Required Configuration
 
+- `--driverId <driverId>`: Driver ID (email address).
+
+Then you need to provider either of the following for your connection to Azure Event Hub or Fabric Event Stream.
 - `-c|--connection <connectionString>`: Azure Event Hub or Fabric Event Stream
   connection string.
 
@@ -46,7 +49,7 @@ application will use the Azure CLI settings to authenticate.
 
 ### Optional Configuration
 
-- - `-i|--ip <ipAddress>`: IP address to bind the UDP listener. Defaults to
+- `-i|--ip <ipAddress>`: IP address to bind the UDP listener. Defaults to
   'any'.
 - `-p|--port <port>`: Port to bind the UDP listener. Defaults to `5300`.
 - `-x|--dataEncoding <encoding>`: Encoding of the data (Json, AvroBinary,
@@ -58,7 +61,6 @@ application will use the Azure CLI settings to authenticate.
 - `-r|--rate <dataRate>`: Data sending rate in Hz. Defaults to `1`.
 - `-t|--tenant <tenantId>`: Tenant ID. Defaults to `default`.
 - `-s|--session <sessionId>`: Session ID, defaults to a timestamp.
-- `--car <carId>`: Car ID, defaults automatically based on telemetry data.
 
 ## Usage
 
@@ -73,7 +75,7 @@ To connect the Forza Motorsport game to ForzaBridge, configure the game to send
 telemetry data to the IP address and port where ForzaBridge is listening. This 
 is done in the "Gameplay & HUD" settings of the game under "UDP Race Telemetry".
 
-When the IP adfdress shows as '0.0.0.0' when you start the bridge, in Forza
+When the IP address shows as '0.0.0.0' when you start the bridge, in Forza
 Motorsport (2023), you can just configure the local address '127.0.0.1', in other
 Forza games, you may need to use the local network IP address of the machine
 running ForzaBridge.
@@ -100,7 +102,7 @@ encodings are available:
 - `AvroBinaryGZip`: Avro binary encoding with GZIP compression.
 - `AvroJsonGZip`: Avro JSON encoding with GZIP compression.
 
-Thje `Json` encoding is the default and recommended encoding for telemetry data.
+The `Json` encoding is the default and recommended encoding for telemetry data.
 It encodes the data in JSON format, whereby the data structures conform to the 
 Avro schema defined in the [xRegistry manifest](./xregistry/forza-telemetry.xreg.json).
 

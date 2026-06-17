@@ -63,6 +63,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
                 default: throw new global::Avro.AvroRuntimeException($"Bad index {fieldPos} in Get()");
             }
         }
+
         void global::Avro.Specific.ISpecificRecord.Put(int fieldPos, object fieldValue)
         {
             switch (fieldPos)
@@ -85,6 +86,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
             if ( data is LapTimespan) return (LapTimespan)data;
             if ( contentTypeString == null ) contentTypeString = System.Net.Mime.MediaTypeNames.Application.Octet;
             var contentType = new System.Net.Mime.ContentType(contentTypeString);
+
             if ( contentType.MediaType.EndsWith("+gzip"))
             {
                 var stream = data switch
@@ -100,6 +102,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
                     data = memoryStream.ToArray();
                 }
             }
+
             if ( contentType.MediaType.StartsWith("avro/") || contentType.MediaType.StartsWith("application/vnd.apache.avro") )
             {
                 var stream = data switch
@@ -120,6 +123,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
                 }
                 #pragma warning restore CS8625
             }
+
             if ( contentType.MediaType.StartsWith(System.Net.Mime.MediaTypeNames.Application.Json))
             {
                 if (data is System.Text.Json.JsonElement)
@@ -145,6 +149,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
             }
             throw new System.NotSupportedException($"Unsupported media type {contentType.MediaType}");
         }
+
         private class SpecificDatumWriter : global::Avro.Specific.SpecificDatumWriter<LapTimespan>
         {
             public SpecificDatumWriter() : base(LapTimespan.AvroSchema)
@@ -156,6 +161,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
                  return base.ResolveEnum(global::Avro.EnumSchema.Create(es.Name, es.Symbols, GetType().Assembly.GetName().Name+"."+es.Namespace, null, null, es.Documentation, es.Default));
              }
         }
+
         /// <summary>
         /// Converts the object to a byte array
         /// </summary>
@@ -183,11 +189,13 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
                 encoder.Flush();
                 result = stream.ToArray();
             }
-        if (contentType.MediaType.StartsWith(System.Net.Mime.MediaTypeNames.Application.Json))
+            
+            if (contentType.MediaType.StartsWith(System.Net.Mime.MediaTypeNames.Application.Json))
             {
                 result = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(this);
             }
-        if (result != null && contentType.MediaType.EndsWith("+gzip"))
+        
+            if (result != null && contentType.MediaType.EndsWith("+gzip"))
             {
                 var stream = new System.IO.MemoryStream();
                 using (var gzip = new System.IO.Compression.GZipStream(stream, System.IO.Compression.CompressionMode.Compress))
@@ -198,6 +206,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
             }
             return ( result != null ) ? result : throw new System.NotSupportedException($"Unsupported media type {contentType.MediaType}");
         }
+
         /// <summary>
         /// Checks if the JSON element matches the schema
         /// </summary>

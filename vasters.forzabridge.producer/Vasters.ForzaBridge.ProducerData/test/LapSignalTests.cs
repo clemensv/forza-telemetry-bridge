@@ -6,9 +6,6 @@ using FluentAssertions;
 
 namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
 {
-
-
-    
     /// <summary> Test class for LapSignal </summary> 
     [TestFixture]
     public class LapSignalTests
@@ -29,6 +26,8 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
             instance.CarId = "test_string";
             instance.SessionId = "test_string";
             instance.Timespan = new global::Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry.LapTimespan();
+            instance.TrackId = "test_string";
+            instance.DriverId = "test_string";
             return instance;
         }
         /// <summary> Testing property LapId  </summary>
@@ -63,6 +62,22 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
             _instance.Timespan = testValue;
             _instance.Timespan.Should().BeEquivalentTo(testValue);
         }
+        /// <summary> Testing property TrackId  </summary>
+        [Test]
+        public void TestTrackIdProperty()
+        {
+            var testValue = "test_string";
+            _instance.TrackId = testValue;
+            _instance.TrackId.Should().Be(testValue);
+        }
+        /// <summary> Testing property DriverId  </summary>
+        [Test]
+        public void TestDriverIdProperty()
+        {
+            var testValue = "test_string";
+            _instance.DriverId = testValue;
+            _instance.DriverId.Should().Be(testValue);
+        }
         /// <summary> Testing Avro serializer </summary>
         [Test]
         public void Test_ToByteArray_FromData()
@@ -73,6 +88,4 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
             _instance.Should().BeEquivalentTo(newInstance);
         }
     }
-
-
 }

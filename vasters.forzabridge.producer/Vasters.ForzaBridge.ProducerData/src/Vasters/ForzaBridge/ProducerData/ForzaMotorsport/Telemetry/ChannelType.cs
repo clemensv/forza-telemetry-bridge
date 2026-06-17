@@ -80,6 +80,11 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
         Boost,
         Fuel,
         DistanceTraveled,
+        BestLap,
+        LastLap,
+        CurrentLap,
+        CurrentRaceTime,
+        LapNumber,
         RacePosition,
         Accel,
         Brake,
@@ -92,6 +97,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
         TireWearFrontLeft,
         TireWearFrontRight,
         TireWearRearLeft,
-        TireWearRearRight
+        TireWearRearRight,
+        TrackOrdinal
     }
 }

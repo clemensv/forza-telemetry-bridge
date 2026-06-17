@@ -56,6 +56,17 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
         [System.Text.Json.Serialization.JsonPropertyName("Data")]
         public List<double> Data { get; set; }
         /// <summary>
+        /// The unique identifier of the track
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("TrackId")]
+        public string? TrackId { get; set; }
+        /// <summary>
+        /// The unique name of the driver
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("DriverId")]
+        public string? DriverId { get; set; }
+
+        /// <summary>
         /// Default constructor
         ///</summary>
         public Channel()
@@ -112,7 +123,9 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
         "\", \"type\": \"record\", \"fields\": [{\"name\": \"StartTS\", \"type\": \"long\", \"logicalType"+
         "\": \"timestamp-millis\"}, {\"name\": \"EndTS\", \"type\": \"long\", \"logicalType\": \"timest"+
         "amp-millis\"}], \"namespace\": \"ForzaMotorsport.Telemetry\"}}, {\"name\": \"Data\", \"typ"+
-        "e\": {\"type\": \"array\", \"items\": \"double\"}}]}");
+        "e\": {\"type\": \"array\", \"items\": \"double\"}}, {\"name\": \"TrackId\", \"doc\": \"The"+
+        "unique identifier of the track\", \"type\": \"string\"}, {\"name\": \"DriverId\", \"doc\": \"The"+
+        "unique identifier of the driver\", \"type\": \"string\"}]}");
     
         global::Avro.Schema global::Avro.Specific.ISpecificRecord.Schema => AvroSchema;
     
@@ -128,6 +141,8 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
                 case 5: return this.Frequency;
                 case 6: return this.Timespan;
                 case 7: return this.Data;
+                case 8: return this.TrackId;
+                case 9: return this.DriverId;
                 default: throw new global::Avro.AvroRuntimeException($"Bad index {fieldPos} in Get()");
             }
         }
@@ -143,6 +158,8 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
                 case 5: this.Frequency = (long)fieldValue; break;
                 case 6: this.Timespan = fieldValue is global::Avro.Generic.GenericRecord?new global::Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry.BatchTimespan((global::Avro.Generic.GenericRecord)fieldValue):(global::Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry.BatchTimespan)fieldValue; break;
                 case 7: this.Data = fieldValue is Object[]?((Object[])fieldValue).Select(x => (double)x).ToList():(List<double>)fieldValue; break;
+                case 8: this.TrackId = (string?)fieldValue; break;
+                case 9: this.DriverId = (string?)fieldValue; break;
                 default: throw new global::Avro.AvroRuntimeException($"Bad index {fieldPos} in Put()");
             }
         }
@@ -159,6 +176,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
             if ( data is Channel) return (Channel)data;
             if ( contentTypeString == null ) contentTypeString = System.Net.Mime.MediaTypeNames.Application.Octet;
             var contentType = new System.Net.Mime.ContentType(contentTypeString);
+
             if ( contentType.MediaType.EndsWith("+gzip"))
             {
                 var stream = data switch
@@ -174,6 +192,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
                     data = memoryStream.ToArray();
                 }
             }
+
             if ( contentType.MediaType.StartsWith("avro/") || contentType.MediaType.StartsWith("application/vnd.apache.avro") )
             {
                 var stream = data switch
@@ -194,6 +213,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
                 }
                 #pragma warning restore CS8625
             }
+
             if ( contentType.MediaType.StartsWith(System.Net.Mime.MediaTypeNames.Application.Json))
             {
                 if (data is System.Text.Json.JsonElement)
@@ -219,6 +239,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
             }
             throw new System.NotSupportedException($"Unsupported media type {contentType.MediaType}");
         }
+
         private class SpecificDatumWriter : global::Avro.Specific.SpecificDatumWriter<Channel>
         {
             public SpecificDatumWriter() : base(Channel.AvroSchema)
@@ -230,6 +251,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
                  return base.ResolveEnum(global::Avro.EnumSchema.Create(es.Name, es.Symbols, GetType().Assembly.GetName().Name+"."+es.Namespace, null, null, es.Documentation, es.Default));
              }
         }
+
         /// <summary>
         /// Converts the object to a byte array
         /// </summary>
@@ -239,6 +261,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
         {
             var contentType = new System.Net.Mime.ContentType(contentTypeString);
             byte[]? result = null;
+
             if (contentType.MediaType.StartsWith("avro/binary") || contentType.MediaType.StartsWith("application/vnd.apache.avro+avro"))
             {
                 var stream = new System.IO.MemoryStream();
@@ -257,11 +280,13 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
                 encoder.Flush();
                 result = stream.ToArray();
             }
-        if (contentType.MediaType.StartsWith(System.Net.Mime.MediaTypeNames.Application.Json))
+
+            if (contentType.MediaType.StartsWith(System.Net.Mime.MediaTypeNames.Application.Json))
             {
                 result = System.Text.Json.JsonSerializer.SerializeToUtf8Bytes(this);
             }
-        if (result != null && contentType.MediaType.EndsWith("+gzip"))
+
+            if (result != null && contentType.MediaType.EndsWith("+gzip"))
             {
                 var stream = new System.IO.MemoryStream();
                 using (var gzip = new System.IO.Compression.GZipStream(stream, System.IO.Compression.CompressionMode.Compress))
@@ -272,6 +297,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
             }
             return ( result != null ) ? result : throw new System.NotSupportedException($"Unsupported media type {contentType.MediaType}");
         }
+
         /// <summary>
         /// Checks if the JSON element matches the schema
         /// </summary>
@@ -282,7 +308,7 @@ namespace Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry
             (element.TryGetProperty("ChannelId", out System.Text.Json.JsonElement ChannelId) && ((ChannelId.ValueKind == System.Text.Json.JsonValueKind.String && Enum.TryParse<global::Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry.ChannelType>(ChannelId.GetString(), true, out _ )))) &&
             (!element.TryGetProperty("CarId", out System.Text.Json.JsonElement CarId) || (CarId.ValueKind == System.Text.Json.JsonValueKind.String) || CarId.ValueKind == System.Text.Json.JsonValueKind.Null) &&
             (!element.TryGetProperty("SessionId", out System.Text.Json.JsonElement SessionId) || (SessionId.ValueKind == System.Text.Json.JsonValueKind.String) || SessionId.ValueKind == System.Text.Json.JsonValueKind.Null) &&
-            (!element.TryGetProperty("LapId", out System.Text.Json.JsonElement LapId) || (LapId.ValueKind == System.Text.Json.JsonValueKind.String) || LapId.ValueKind == System.Text.Json.JsonValueKind.Null) &&
+            (!element.TryGetProperty("LapId", out System.Text.Json.JsonElement LapId) || (LapId.ValueKind == System.Text.Json.JsonValueKind.String) || LapId.ValueKind == System.Text.Json.JsonValueKind.Null) &&            
             (element.TryGetProperty("SampleCount", out System.Text.Json.JsonElement SampleCount) && (SampleCount.ValueKind == System.Text.Json.JsonValueKind.Number)) &&
             (element.TryGetProperty("Frequency", out System.Text.Json.JsonElement Frequency) && (Frequency.ValueKind == System.Text.Json.JsonValueKind.Number)) &&
             (element.TryGetProperty("Timespan", out System.Text.Json.JsonElement Timespan) && (global::Vasters.ForzaBridge.ProducerData.ForzaMotorsport.Telemetry.BatchTimespan.IsJsonMatch(Timespan))) &&
